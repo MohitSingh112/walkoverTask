@@ -31,7 +31,7 @@ class LoginScreenCC extends Component {
 
         const isValid = this.isEmailPasswordValid();
         if (isValid) {
-            //Todo -> navigate
+            this.props.navigation.navigate('Home');
         }
         else {
             this.setState({ errorIconVisible: true, errorText: "Email or password is incorrect" })
@@ -121,6 +121,7 @@ class LoginScreenCC extends Component {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: 'white',
         height: '100%',
         width: '100%',
         justifyContent: 'top',

@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
+
 
 const LoginScreenFC = () => {
 
+    
+    const navigation = useNavigation();
+    
     const [isPasswordHidden, setIsPasswordHidden] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -33,8 +38,7 @@ const LoginScreenFC = () => {
 
         const isValid = isEmailPasswordValid();
         if (isValid) {
-            //Todo -> navigate
-            console.log("Logged in successfully!");
+            navigation.navigate('Home');
         } else {
             setErrorIconVisible(true);
             setErrorText("Email or password is incorrect");
@@ -79,7 +83,7 @@ const LoginScreenFC = () => {
                 <View style={styles.input}>
                     <TextInput
                         placeholder="Enter your password"
-                        style={{ flex: 1, height: '100%' }}
+                        style={{ flex: 1, height: '100%',textColor: 'black' }}
                         onChangeText={onPasswordChangeText}
                         secureTextEntry={isPasswordHidden}
                         value={password}
@@ -110,6 +114,7 @@ const LoginScreenFC = () => {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: 'white',
         height: '100%',
         width: '100%',
         justifyContent: 'top',

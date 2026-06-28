@@ -1,11 +1,12 @@
-import {View, Text, Image, ScrollView, TextInput} from 'react-native';
-import LoginScreenFC from './components/LoginScreenFC';
+import StackNavigator from './navigation/StackNavigator';
 import { SafeAreaView } from 'react-native-safe-area-context';
 const App = () => {
   return (
-    <SafeAreaView>
-      <LoginScreenFC></LoginScreenFC>
-    </SafeAreaView>
+      
+      <SafeAreaView style={{ flex: 1 }}>
+        <StackNavigator />
+      </SafeAreaView>
+ 
   );
 };
 
