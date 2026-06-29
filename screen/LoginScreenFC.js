@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
 
 const LoginScreenFC = () => {
 
-    
+
     const navigation = useNavigation();
-    
+
     const [isPasswordHidden, setIsPasswordHidden] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -21,9 +22,9 @@ const LoginScreenFC = () => {
     };
 
     const isEmailPasswordValid = () => email.toString().trim() === 'm@walkover.com' && password.toString().trim() === '1234';
-    
 
-    const onLoginClick = () => {
+
+    const onLoginClick = async () => {
         if (email === "" || password === "") {
             setErrorIconVisible(true);
             setErrorText("Fields cannot be empty");
@@ -38,7 +39,15 @@ const LoginScreenFC = () => {
 
         const isValid = isEmailPasswordValid();
         if (isValid) {
-            navigation.navigate('Home');
+            try {
+                await AsyncStorage.setItem('isLoggedIn', 'true');
+                navigation.replace('Home');
+            }
+            catch (error) {
+                console.log(`Error : ${error}`);
+            
+            }
+
         } else {
             setErrorIconVisible(true);
             setErrorText("Email or password is incorrect");
@@ -83,7 +92,7 @@ const LoginScreenFC = () => {
                 <View style={styles.input}>
                     <TextInput
                         placeholder="Enter your password"
-                        style={{ flex: 1, height: '100%',textColor: 'black' }}
+                        style={{ flex: 1, height: '100%', textColor: 'black' }}
                         onChangeText={onPasswordChangeText}
                         secureTextEntry={isPasswordHidden}
                         value={password}
