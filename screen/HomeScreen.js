@@ -26,7 +26,7 @@ const HomeScreen = () => {
             setIsLoading(true);
             setIsError(false);
 
-            const response = await fetch('https://randomuser.me/api/?results=100&inc=name,email,picture');
+            const response = await fetch('https://randomuser.me/api/?results=50&inc=name,email,picture');
             if (!response.ok) throw new Error("Failed to fetch random users");
 
             const data = await response.json();
@@ -123,11 +123,6 @@ const style = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 15,
         backgroundColor: 'white',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
     },
     topText: {
         fontWeight: 'bold',
@@ -155,9 +150,6 @@ const style = StyleSheet.create({
         alignItems: 'center',
         elevation: 1,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
     },
     avatar: {
         width: 50,
