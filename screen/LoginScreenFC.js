@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { loginRequest } from '../redux/actions/authActions';
 
 const LoginScreenFC = () => {
-
-
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+    
+ 
+    const { loading, isLoggedIn } = useSelector(state => state.auth);
 
     const [isPasswordHidden, setIsPasswordHidden] = useState(true);
     const [email, setEmail] = useState("");
@@ -16,42 +18,30 @@ const LoginScreenFC = () => {
     const [errorIconVisible, setErrorIconVisible] = useState(false);
     const [errorText, setErrorText] = useState("");
 
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigation.replace('Home');
+        }
+    }, [isLoggedIn, navigation]);
+
     const validateEmail = (inputEmail) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(inputEmail);
     };
 
-    const isEmailPasswordValid = () => email.toString().trim() === 'm@walkover.com' && password.toString().trim() === '1234';
-
-
-    const onLoginClick = async () => {
+    const onLoginClick = () => {
         if (email === "" || password === "") {
             setErrorIconVisible(true);
             setErrorText("Fields cannot be empty");
             return;
         }
-
         if (!validateEmail(email)) {
             setErrorIconVisible(true);
             setErrorText("Invalid Email");
             return;
         }
 
-        const isValid = isEmailPasswordValid();
-        if (isValid) {
-            try {
-                await AsyncStorage.setItem('isLoggedIn', 'true');
-                navigation.replace('Home');
-            }
-            catch (error) {
-                console.log(`Error : ${error}`);
-            
-            }
-
-        } else {
-            setErrorIconVisible(true);
-            setErrorText("Email or password is incorrect");
-        }
+        dispatch(loginRequest(email, password));
     };
 
     const onEmailChangeText = (text) => {
