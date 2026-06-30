@@ -1,76 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import {
-    View,
-    Text,
-    Pressable,
-    StyleSheet,
-    FlatList,
-    ActivityIndicator,
-    Image
-} from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, Pressable, StyleSheet, FlatList, ActivityIndicator, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUsersRequest } from '../redux/actions/userActions';
+import { logout } from '../redux/actions/authActions';
 
 const HomeScreen = () => {
     const navigation = useNavigation();
+    const dispatch = useDispatch();
 
-
-    const [users, setUsers] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isError, setIsError] = useState(false);
-
-
-    const fetchUsers = async () => {
-        try {
-            setIsLoading(true);
-            setIsError(false);
-
-            const response = await fetch('https://randomuser.me/api/?results=50&inc=name,email,picture');
-            if (!response.ok) throw new Error("Failed to fetch random users");
-
-            const data = await response.json();
-
-            setUsers(data.results);
-        } catch (error) {
-            console.error("API Fetch Error:", error);
-            setIsError(true);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
+    // Read users, loading, and error states directly from Redux
+    const { users, loading: isLoading, error: isError } = useSelector(state => state.users);
 
     useEffect(() => {
-        fetchUsers();
-    }, []);
+        // Trigger the Saga to fetch users on mount
+        dispatch(fetchUsersRequest());
+    }, [dispatch]);
 
-    const logOut = async () => {
-        try {
-            await AsyncStorage.removeItem('isLoggedIn');
-            navigation.replace('Login');
-        } catch (error) {
-            console.log("Error logging out:", error);
-        }
+    const logOut = () => {
+        // Dispatch logout. Saga handles clearing AsyncStorage.
+        dispatch(logout());
+        navigation.replace('Login');
     };
 
     const renderUserItem = ({ item }) => {
-
         const fullName = `${item.name.first} ${item.name.last}`;
-
         return (
             <View style={style.card}>
-
-                <Image
-                    source={{ uri: item.picture.medium }}
-                    style={style.avatar}
-                />
-
+                <Image source={{ uri: item.picture.medium }} style={style.avatar} />
                 <View style={style.userInfo}>
                     <Text style={style.userName}>{fullName}</Text>
                     <Text style={style.userEmail}>{item.email}</Text>
                 </View>
-
                 <Icon name="chevron-forward-outline" size={18} color="#CCC" />
             </View>
         );
