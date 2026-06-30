@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import { 
+    View, 
+    Text, 
+    TextInput, 
+    Pressable, 
+    StyleSheet, 
+    ActivityIndicator, 
+    ScrollView
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +18,6 @@ const LoginScreenFC = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     
- 
     const { loading, isLoggedIn } = useSelector(state => state.auth);
 
     const [isPasswordHidden, setIsPasswordHidden] = useState(true);
@@ -44,98 +52,114 @@ const LoginScreenFC = () => {
         dispatch(loginRequest(email, password));
     };
 
-    const onEmailChangeText = (text) => {
-        setEmail(text);
-        setErrorIconVisible(false);
-    };
-
-    const onPasswordChangeText = (text) => {
-        setPassword(text);
-        setErrorIconVisible(false);
-    };
-
     return (
-        <View style={styles.container}>
-        //header text
-            <Text style={styles.headerText}>Login Screen using FC</Text>
+        <SafeAreaView style={styles.safeArea}>
+        ₹
+            <ScrollView 
+                contentContainerStyle={styles.scrollContainer} 
+                keyboardShouldPersistTaps="handled"
+            >
+                {/* Header Text */}
+                <Text style={styles.headerText}>Login Screen using FC</Text>
 
-            // input container
-            <View style={styles.inputContainer}>
+                {/* Input Container */}
+                <View style={styles.inputContainer}>
 
-                //error
-                {errorIconVisible && (
-                    <View style={{ marginBottom: 3, flexDirection: "row", alignItems: 'center' }}>
-                        <Icon name={'alert-circle-outline'} size={20} color="red" />
-                        <Text style={{ marginStart: 3, color: 'red' }}>{errorText}</Text>
-                    </View>
-                )}
+                    {/* Error message */}
+                    {errorIconVisible && (
+                        <View style={styles.errorContainer}>
+                            <Icon name={'alert-circle-outline'} size={20} color="red" />
+                            <Text style={{ marginStart: 3, color: 'red' }}>{errorText}</Text>
+                        </View>
+                    )}
 
-                // email input
-                <TextInput
-                    placeholder="Enter your email"
-                    style={styles.input}
-                    onChangeText={onEmailChangeText}
-                    value={email}
-                />
-
-                // password input container
-                <View style={styles.input}>
+                    {/* Email Input */}
                     <TextInput
-                        placeholder="Enter your password"
-                        style={{ flex: 1, height: '100%', textColor: 'black' }}
-                        onChangeText={onPasswordChangeText}
-                        secureTextEntry={isPasswordHidden}
-                        value={password}
+                        placeholder="Enter your email"
+                        style={styles.input}
+                        onChangeText={(text) => { setEmail(text); setErrorIconVisible(false); }}
+                        value={email}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
                     />
 
-                    // eye icon
-                    <Pressable
-                        style={{ marginRight: '4%', alignItems: 'center', justifyContent: 'center' }}
-                        onPress={() => setIsPasswordHidden(!isPasswordHidden)}
-                    >
-                        <Icon
-                            name={isPasswordHidden ? 'eye-off-outline' : 'eye-outline'}
-                            size={20}
-                            color="black"
+                    {/* Password Input Container */}
+                    <View style={styles.input}>
+                        <TextInput
+                            placeholder="Enter your password"
+                            style={{ flex: 1, height: '100%', color: 'black' }}
+                            onChangeText={(text) => { setPassword(text); setErrorIconVisible(false); }}
+                            secureTextEntry={isPasswordHidden}
+                            value={password}
                         />
+
+                        {/* Eye Icon */}
+                        <Pressable
+                            style={{ marginRight: '4%', alignItems: 'center', justifyContent: 'center' }}
+                            onPress={() => setIsPasswordHidden(!isPasswordHidden)}
+                        >
+                            <Icon
+                                name={isPasswordHidden ? 'eye-off-outline' : 'eye-outline'}
+                                size={20}
+                                color="black"
+                            />
+                        </Pressable>
+                    </View>
+
+                    {/* Login Button */}
+                    <Pressable style={styles.button} onPress={onLoginClick}>
+                        {loading ? (
+                            <ActivityIndicator color="black" />
+                        ) : (
+                            <Text style={styles.buttonText}>Login</Text>
+                        )}
                     </Pressable>
                 </View>
-
-                // login button
-                <Pressable style={styles.button} onPress={onLoginClick}>
-                    <Text style={styles.buttonText}>Login</Text>
-                </Pressable>
-            </View>
-        </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 
-
 const styles = StyleSheet.create({
-    container: {
+    safeArea: {
+        flex: 1,
         backgroundColor: 'white',
-        height: '100%',
-        width: '100%',
-        justifyContent: 'top',
+    },
+    scrollContainer: {
+        flexGrow: 1, 
+        justifyContent: 'center', 
         alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 30,
+    },
+    inputContainer: {
+        width: '100%',
+        marginTop: 30, 
     },
     input: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
         width: '100%',
-        height: 40,
+        height: 45,
         borderColor: 'gray',
         borderWidth: 1,
-        marginBottom: 10,
+        marginBottom: 15,
         paddingHorizontal: 10,
+        borderRadius: 5,
+    },
+    errorContainer: {
+        marginBottom: 8, 
+        flexDirection: "row", 
+        alignItems: 'center',
+        width: '100%'
     },
     button: {
-        height: 40,
+        height: 45,
         width: '100%',
         marginTop: 15,
         backgroundColor: 'cyan',
         borderRadius: 5,
-        marginBottom: 10,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -144,18 +168,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     headerText: {
-        marginTop: '50%',
-        fontSize: 30,
+        fontSize: 28,
         fontWeight: 'bold',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    inputContainer: {
-        marginTop: '30%',
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'start',
-        paddingHorizontal: 20
+        textAlign: 'center',
     },
 });
 

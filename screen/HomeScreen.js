@@ -10,16 +10,15 @@ const HomeScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
 
-    // Read users, loading, and error states directly from Redux
-    const { users, loading: isLoading, error: isError } = useSelector(state => state.users);
+    const { users, loading:isLoading, error: isError } = useSelector(state => state.users);
 
     useEffect(() => {
-        // Trigger the Saga to fetch users on mount
+    
         dispatch(fetchUsersRequest());
     }, [dispatch]);
 
     const logOut = () => {
-        // Dispatch logout. Saga handles clearing AsyncStorage.
+
         dispatch(logout());
         navigation.replace('Login');
     };
@@ -55,7 +54,7 @@ const HomeScreen = () => {
             ) : isError ? (
                 <View style={style.center}>
                     <Text style={style.errorText}>Failed to load users.</Text>
-                    <Pressable style={style.retryButton} onPress={fetchUsers}>
+                    <Pressable style={style.retryButton} onPress={() => dispatch(fetchUsersRequest())}>
                         <Text style={style.retryText}>Retry</Text>
                     </Pressable>
                 </View>

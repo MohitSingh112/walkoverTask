@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
     const dispatch = useDispatch();
-    // Read the login state directly from Redux
+   
     const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
     const [isAppLoading, setIsAppLoading] = useState(true);
 
@@ -22,7 +22,7 @@ const StackNavigator = () => {
             try {
                 const value = await AsyncStorage.getItem('isLoggedIn');
                 if (value === 'true') {
-                    // Hydrate Redux state if user is already logged in
+                 
                     dispatch(loginSuccess());
                 }
             } catch (error) {
@@ -44,7 +44,6 @@ const StackNavigator = () => {
 
     return (
         <NavigationContainer>
-            {/* Navigation reacts automatically to Redux state changes */}
             <Stack.Navigator initialRouteName={isLoggedIn ? "Home" : "Login"}>
                 <Stack.Screen name="Login" component={LoginScreenFC} />
                 <Stack.Screen name="Home" component={HomeScreen} />
